@@ -17,6 +17,7 @@ export function LibraryTab() {
   const searchQuery = useLibraryStore((s) => s.searchQuery);
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
+  const playLibraryCollection = useLibraryStore((s) => s.playLibraryCollection);
   const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
   const addMediaToQueue = useLibraryStore((s) => s.addMediaToQueue);
   const selectMedia = useLibraryStore((s) => s.selectMedia);
@@ -83,6 +84,7 @@ export function LibraryTab() {
       isNowPlaying={isNowPlaying}
       onSelectTrack={(item) => selectMedia(item.id)}
       onPlayTrack={(item) => void playLibraryTrack(item.id)}
+      onPlayCollection={(tracks) => void playLibraryCollection(tracks)}
       onAddTrackToQueue={(item) => void addLibraryTrackToQueue(item.id)}
       onAddCollectionToQueue={(tracks) => void addMediaToQueue(tracks)}
     />
@@ -109,6 +111,7 @@ export function LibraryTab() {
                   folderName={group.folderName}
                   isExpanded={expandedFolderPath === group.folderPath}
                   onClick={() => toggleFolder(group.folderPath)}
+                  onPlay={() => void playLibraryCollection(group.tracks)}
                 />
                 {trackList && index === trackListInsertIndex && (
                   <div className={styles.trackListRow}>{trackList}</div>

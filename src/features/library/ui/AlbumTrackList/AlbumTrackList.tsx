@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Play, Plus } from "lucide-react";
 import { ToolbarButton } from "../../../../shared";
 import type { MediaItem } from "../../model/types";
 import { MediaTrackRow } from "../MediaTrackRow/MediaTrackRow";
@@ -10,6 +10,7 @@ interface AlbumTrackListProps {
   isNowPlaying?: (item: MediaItem) => boolean;
   onSelectTrack: (item: MediaItem) => void;
   onPlayTrack: (item: MediaItem) => void;
+  onPlayCollection?: (tracks: MediaItem[]) => void;
   onAddTrackToQueue?: (item: MediaItem) => void;
   onAddCollectionToQueue?: (tracks: MediaItem[]) => void;
 }
@@ -20,18 +21,28 @@ export function AlbumTrackList({
   isNowPlaying,
   onSelectTrack,
   onPlayTrack,
+  onPlayCollection,
   onAddTrackToQueue,
   onAddCollectionToQueue,
 }: AlbumTrackListProps) {
   return (
     <div className={styles.trackList}>
-      {onAddCollectionToQueue && (
+      {(onPlayCollection || onAddCollectionToQueue) && (
         <div className={styles.trackListActions}>
-          <ToolbarButton
-            label="Add all to queue"
-            icon={<Plus size={14} strokeWidth={2.25} />}
-            onClick={() => onAddCollectionToQueue(tracks)}
-          />
+          {onPlayCollection && (
+            <ToolbarButton
+              label="Play"
+              icon={<Play size={14} fill="currentColor" />}
+              onClick={() => onPlayCollection(tracks)}
+            />
+          )}
+          {onAddCollectionToQueue && (
+            <ToolbarButton
+              label="Add all to queue"
+              icon={<Plus size={14} strokeWidth={2.25} />}
+              onClick={() => onAddCollectionToQueue(tracks)}
+            />
+          )}
         </div>
       )}
       {tracks.map((track, index) => (
