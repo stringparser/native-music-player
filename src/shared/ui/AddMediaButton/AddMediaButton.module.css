@@ -1,0 +1,21 @@
+.fileInput {
+  display: none;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  color: #121212;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.addBtn:hover {
+  background: var(--accent-hover);
+}

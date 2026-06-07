@@ -1,0 +1,97 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--bg-content);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table td {
+  padding: 10px 16px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.table tbody tr.selected {
+  background: var(--accent-muted);
+}
+
+.table tbody tr.nowPlaying {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.table tbody tr.nowPlaying.selected {
+  background: var(--accent-muted);
+}
+
+.table tbody tr.selected td {
+  color: var(--text-primary);
+}
+
+.colTitle {
+  width: 35%;
+}
+
+.colArtist {
+  width: 20%;
+}
+
+.colCategory {
+  width: 15%;
+}
+
+.colDuration {
+  width: 10%;
+}
+
+.colActions {
+  width: 120px;
+  text-align: right;
+}
+
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.actionBtn:hover {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.actionBtnDanger:hover {
+  color: #e57373;
+}

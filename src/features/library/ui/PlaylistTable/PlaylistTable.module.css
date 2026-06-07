@@ -1,0 +1,20 @@
+.colName {
+  width: 50%;
+}
+
+.colTracks {
+  width: 15%;
+}
+
+.empty {
+  padding: 24px 16px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.empty span {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
