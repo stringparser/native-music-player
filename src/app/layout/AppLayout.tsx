@@ -1,6 +1,7 @@
 import { LibraryView } from "../../features/library";
 import { TabBar } from "../../features/navigation";
 import { PlayerBar } from "../../features/playback";
+import { LoadingOverlay, ToastContainer } from "../../shared";
 import styles from "./AppLayout.module.css";
 
 export function AppLayout() {
@@ -9,8 +10,10 @@ export function AppLayout() {
       <TabBar />
       <div className={styles.workspace}>
         <LibraryView />
+        <LoadingOverlay />
       </div>
       <PlayerBar />
+      <ToastContainer />
     </div>
   );
 }

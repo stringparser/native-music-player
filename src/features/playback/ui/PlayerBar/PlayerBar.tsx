@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import {
-  Maximize2,
   Pause,
   Play,
   SkipBack,
@@ -9,16 +8,21 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
+import { useLibraryStore } from "../../../library/store/library.store";
 import { formatPlaybackTime } from "../../services/time-format.service";
 import { usePlaybackStore } from "../../store/playback.store";
 import styles from "./PlayerBar.module.css";
 
 export function PlayerBar() {
   const isPlaying = usePlaybackStore((s) => s.isPlaying);
+  const isPaused = usePlaybackStore((s) => s.isPaused);
   const currentTime = usePlaybackStore((s) => s.currentTime);
   const duration = usePlaybackStore((s) => s.duration);
   const volume = usePlaybackStore((s) => s.volume);
   const error = usePlaybackStore((s) => s.error);
+  const nowPlayingId = usePlaybackStore((s) => s.nowPlayingId);
+  const library = useLibraryStore((s) => s.library);
+  const queue = useLibraryStore((s) => s.queue);
   const togglePlay = usePlaybackStore((s) => s.togglePlay);
   const stop = usePlaybackStore((s) => s.stop);
   const next = usePlaybackStore((s) => s.next);
@@ -27,7 +31,12 @@ export function PlayerBar() {
   const seek = usePlaybackStore((s) => s.seek);
   const previousVolumeRef = useRef(80);
 
+  const nowPlaying =
+    library.find((item) => item.id === nowPlayingId) ??
+    queue.find((item) => item.id === nowPlayingId);
+
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const playbackLabel = isPlaying ? "Pause" : isPaused ? "Resume" : "Play";
 
   const handleMuteToggle = () => {
     if (volume === 0) {
@@ -40,6 +49,19 @@ export function PlayerBar() {
 
   return (
     <footer className={styles.playerBar}>
+      <div className={styles.trackInfo}>
+        {nowPlaying ? (
+          <>
+            <span className={styles.trackTitle}>{nowPlaying.title}</span>
+            {nowPlaying.artist && (
+              <span className={styles.trackArtist}>{nowPlaying.artist}</span>
+            )}
+          </>
+        ) : (
+          <span className={styles.trackPlaceholder}>Nothing playing</span>
+        )}
+      </div>
+
       <div className={styles.controlsLeft}>
         <button
           type="button"
@@ -53,7 +75,7 @@ export function PlayerBar() {
           type="button"
           className={`${styles.controlBtn} ${styles.playBtn}`}
           onClick={() => void togglePlay()}
-          title={isPlaying ? "Pause" : "Play"}
+          title={playbackLabel}
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
@@ -91,7 +113,11 @@ export function PlayerBar() {
             onChange={(e) => void seek(Number(e.target.value))}
           />
         </div>
-        {error && <span className={styles.error}>{error}</span>}
+        {error && (
+          <div className={styles.errorBanner} role="alert">
+            {error}
+          </div>
+        )}
       </div>
 
       <div className={styles.controlsRight}>
@@ -118,10 +144,6 @@ export function PlayerBar() {
             onChange={(e) => void setVolume(Number(e.target.value))}
           />
         </div>
-
-        <button type="button" className={styles.controlBtn} title="Fullscreen">
-          <Maximize2 size={16} />
-        </button>
       </div>
     </footer>
   );

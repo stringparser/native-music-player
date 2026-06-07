@@ -1,0 +1,29 @@
+.toolbarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.toolbarBtn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.toolbarBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.danger:hover:not(:disabled) {
+  color: var(--color-error);
+  border-color: rgba(229, 115, 115, 0.35);
+}

@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import type { MediaItem, Playlist } from "../model/types";
+import { toastService } from "../../../shared/services/toast.service";
 import { playlistService } from "../services/playlist.service";
-import {
-  queueService,
-} from "../services/queue.service";
+import { queueService } from "../services/queue.service";
 import { storageService } from "../services/storage.service";
 import { usePlaybackStore } from "../../playback/store/playback.store";
 import { playbackService } from "../../playback/services/playback.service";
@@ -40,8 +39,8 @@ interface LibraryState {
   removeFromLibrary: (trackId: string) => Promise<void>;
 }
 
-async function persistState(): Promise<void> {
-  await storageService.persist();
+async function persistState(): Promise<boolean> {
+  return storageService.persist();
 }
 
 function stopIfPlayingTrack(trackId: string): void {
@@ -79,26 +78,56 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
 
   addMediaToLibrary: async (items) => {
     const unique = storageService.mergeLibraryItems(items);
-    if (unique.length === 0) return;
+    if (unique.length === 0) {
+      if (items.length > 0) {
+        toastService.info("All selected files are already in the library");
+      }
+      return;
+    }
 
     get().appendToLibrary(unique);
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.success(
+        unique.length === 1
+          ? "Added 1 track to library"
+          : `Added ${unique.length} tracks to library`,
+      );
+    }
   },
 
   addMediaToQueue: async (items) => {
     const unique = storageService.mergeQueueItems(items);
-    if (unique.length === 0) return;
+    if (unique.length === 0) {
+      if (items.length > 0) {
+        toastService.info("All selected files are already in the queue");
+      }
+      return;
+    }
 
     get().appendToQueue(unique);
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.success(
+        unique.length === 1
+          ? "Added 1 track to queue"
+          : `Added ${unique.length} tracks to queue`,
+      );
+    }
   },
 
   addLibraryTrackToQueue: async (trackId) => {
     const track = queueService.addLibraryTrack(trackId);
-    if (!track) return;
+    if (!track) {
+      toastService.info("Track is already in the queue");
+      return;
+    }
 
     get().appendToQueue([track]);
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.success(`Added "${track.title}" to queue`);
+    }
   },
 
   loadPlaylistToQueue: async (playlistId) => {
@@ -107,11 +136,20 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     if (!playlist) return;
 
     const queue = queueService.buildQueueFromPlaylist(playlist, library);
+    if (queue.length === 0) {
+      toastService.info(`"${playlist.name}" has no available tracks`);
+      return;
+    }
+
     set({ queue, selectedMediaId: queue[0]?.id ?? null });
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.success(`Loaded "${playlist.name}" into queue`);
+    }
   },
 
   removeFromQueue: async (id) => {
+    const track = get().queue.find((item) => item.id === id);
     stopIfPlayingTrack(id);
     set((state) => ({
       queue: state.queue.filter((item) => item.id !== id),
@@ -119,6 +157,9 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
         state.selectedMediaId === id ? null : state.selectedMediaId,
     }));
     await persistState();
+    if (track) {
+      toastService.info(`Removed "${track.title}" from queue`);
+    }
   },
 
   moveQueueItem: async (id, direction) => {
@@ -141,7 +182,10 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     }
 
     set({ queue: [], selectedMediaId: null });
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.info("Queue cleared");
+    }
   },
 
   createPlaylist: async (name, trackPaths = []) => {
@@ -153,16 +197,23 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     };
 
     set((state) => ({ playlists: [...state.playlists, playlist] }));
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.success(`Created playlist "${normalized}"`);
+    }
   },
 
   deletePlaylist: async (playlistId) => {
+    const playlist = get().playlists.find((entry) => entry.id === playlistId);
     set((state) => ({
-      playlists: state.playlists.filter((playlist) => playlist.id !== playlistId),
+      playlists: state.playlists.filter((entry) => entry.id !== playlistId),
       selectedPlaylistId:
         state.selectedPlaylistId === playlistId ? null : state.selectedPlaylistId,
     }));
-    await persistState();
+    const saved = await persistState();
+    if (saved && playlist) {
+      toastService.info(`Deleted playlist "${playlist.name}"`);
+    }
   },
 
   removeFromLibrary: async (trackId) => {
@@ -178,7 +229,10 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       selectedMediaId:
         state.selectedMediaId === trackId ? null : state.selectedMediaId,
     }));
-    await persistState();
+    const saved = await persistState();
+    if (saved) {
+      toastService.info(`Removed "${track.title}" from library`);
+    }
   },
 }));
 
@@ -187,6 +241,17 @@ export function getSelectedMedia(): MediaItem | undefined {
   return (
     library.find((item) => item.id === selectedMediaId) ??
     queue.find((item) => item.id === selectedMediaId)
+  );
+}
+
+export function getNowPlayingMedia(): MediaItem | undefined {
+  const { nowPlayingId } = usePlaybackStore.getState();
+  if (!nowPlayingId) return undefined;
+
+  const { library, queue } = useLibraryStore.getState();
+  return (
+    library.find((item) => item.id === nowPlayingId) ??
+    queue.find((item) => item.id === nowPlayingId)
   );
 }
 

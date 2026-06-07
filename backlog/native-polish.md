@@ -1,6 +1,6 @@
 # Native Polish
 
-OS-level desktop integration. UI look-and-feel is covered in **Phase 5** of [`PLAN.md`](../PLAN.md).
+OS-level desktop integration. In-app UI look-and-feel was covered in **Phase 5** of [`PLAN.md`](../PLAN.md).
 
 ## Ideas
 
@@ -17,3 +17,7 @@ OS-level desktop integration. UI look-and-feel is covered in **Phase 5** of [`PL
 
 - Phase 2 (playback)
 - Phase 5 (UI polish)
+
+## Status
+
+Keyboard shortcuts explicitly deferred from Phase 5.

@@ -1,6 +1,8 @@
 import type { MediaItem } from "../model/types";
 import { MetadataClient } from "../clients/metadata.client";
 import { StorageClient } from "../clients/storage.client";
+import { toastService } from "../../../shared/services/toast.service";
+import { useStatusStore } from "../../../shared/store/status.store";
 import { useLibraryStore } from "../store/library.store";
 import { dedupeQueuePaths } from "./queue.service";
 
@@ -11,16 +13,31 @@ function dedupeByPath(existing: MediaItem[], incoming: MediaItem[]): MediaItem[]
 
 class StorageServiceImpl {
   async hydrate(): Promise<void> {
-    const data = await StorageClient.load();
-    useLibraryStore
-      .getState()
-      .setLibraryData(data.library, data.playlists ?? [], data.queue);
-    useLibraryStore.getState().setHydrated(true);
+    useStatusStore.getState().setLoading(true, "Loading library…");
+
+    try {
+      const data = await StorageClient.load();
+      useLibraryStore
+        .getState()
+        .setLibraryData(data.library, data.playlists ?? [], data.queue);
+      useLibraryStore.getState().setHydrated(true);
+    } catch {
+      toastService.error("Failed to load library");
+    } finally {
+      useStatusStore.getState().setLoading(false);
+    }
   }
 
-  async persist(): Promise<void> {
+  async persist(): Promise<boolean> {
     const { library, playlists, queue } = useLibraryStore.getState();
-    await StorageClient.save({ library, playlists, queue });
+
+    try {
+      await StorageClient.save({ library, playlists, queue });
+      return true;
+    } catch {
+      toastService.error("Failed to save library");
+      return false;
+    }
   }
 
   mergeLibraryItems(incoming: MediaItem[]): MediaItem[] {

@@ -249,6 +249,8 @@ Deferred to [`backlog/`](./backlog/): [remove tracks](./backlog/remove-tracks.md
 
 **Goal:** Refine the frontend once core functionality works end-to-end.
 
+**Status:** Done
+
 ### Scope
 
 **Refactor reusable components**

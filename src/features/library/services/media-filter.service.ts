@@ -11,6 +11,7 @@ export function filterMediaByQuery(
     (item) =>
       item.title.toLowerCase().includes(normalized) ||
       item.artist?.toLowerCase().includes(normalized) ||
+      item.album?.toLowerCase().includes(normalized) ||
       item.category.toLowerCase().includes(normalized),
   );
 }

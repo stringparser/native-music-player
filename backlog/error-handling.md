@@ -2,20 +2,22 @@
 
 User-visible feedback when something goes wrong.
 
-## Ideas
+## Status
 
-- Unsupported audio format
-- Missing or moved file
-- Playback engine errors from Rust
-- Failed load / save (Phase 3 persistence)
-- Simple toast, inline message, or status area — keep minimal for MVP
+**Partially done** — Phase 5 added toast notifications and a player bar error banner for playback and persistence failures.
+
+## Remaining ideas
+
+- Inline row state for missing/moved files
+- Retry action on failed save/load
+- More specific error messages per format or I/O case
 
 ## Touches
 
-- `playback` and `library` services (map client errors to domain messages)
-- UI surfaces in player bar or content area
+- `playback` and `library` services
+- UI surfaces in player bar, toasts, content area
 
 ## Depends on
 
 - Phase 2 (playback)
-- Phase 3 (persistence) — for save/load errors
+- Phase 3 (persistence)

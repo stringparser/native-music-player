@@ -2,17 +2,15 @@
 
 Start playback when the user double-clicks a track in the library or queue.
 
-## Ideas
+## Status
 
-- Double-click row → play that track immediately
-- Single-click remains select; double-click plays
-- If queue tab: optionally start queue from that position
+**Done** — implemented in Phase 5 UI polish.
+
+- Single-click selects a row
+- Double-click plays the track
+- Queue double-click starts playback from that position
 
 ## Touches
 
-- `library` feature (`MediaTable` UI)
+- `library` feature (`MediaTable` / `DataTable` UI)
 - `playback` feature (store → `PlaybackService`)
-
-## Depends on
-
-- Phase 2 (playback)

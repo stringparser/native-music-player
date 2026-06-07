@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { MediaItem } from "../../library/model/types";
 import { getSelectedMedia, useLibraryStore } from "../../library/store/library.store";
+import { toastService } from "../../../shared/services/toast.service";
 import { playbackService } from "../services/playback.service";
 
 interface PlaybackState {
@@ -130,5 +131,8 @@ export const usePlaybackStore = create<PlaybackState>((set) => ({
 
   setError: (message) => {
     set({ error: message, isPlaying: false, isPaused: false });
+    if (message) {
+      toastService.error(message);
+    }
   },
 }));

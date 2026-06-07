@@ -13,6 +13,8 @@
   --accent: #ff8800;
   --accent-hover: #ff9a26;
   --accent-muted: rgba(255, 136, 0, 0.15);
+  --color-error: #e57373;
+  --color-success: #81c784;
   --player-height: 72px;
   --tab-bar-height: 48px;
   --radius-sm: 6px;
@@ -68,6 +70,12 @@ textarea {
 input:focus,
 textarea:focus {
   border-color: var(--accent);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {

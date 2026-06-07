@@ -1,72 +1,17 @@
-.sectionToolbar {
+.mediaTab {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-content);
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-.sectionTitle {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-}
-
-.toolbarActions {
-  display: flex;
-  gap: 8px;
-}
-
-.toolbarBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  color: var(--text-secondary);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.toolbarBtn:hover:not(:disabled) {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border);
-}
-
-.toolbarBtn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.toolbarBtnDanger:hover:not(:disabled) {
-  color: #e57373;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-}
-
-.sectionHeader {
-  padding: 10px 16px 0;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  min-height: 0;
 }
 
 .playlistsSection {
-  margin-top: 8px;
-  padding-bottom: 16px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border-subtle);
 }
