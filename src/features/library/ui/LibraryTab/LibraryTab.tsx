@@ -14,6 +14,7 @@ export function LibraryTab() {
   const searchQuery = useLibraryStore((s) => s.searchQuery);
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
+  const playLibraryCollection = useLibraryStore((s) => s.playLibraryCollection);
   const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
   const addMediaToQueue = useLibraryStore((s) => s.addMediaToQueue);
   const selectMedia = useLibraryStore((s) => s.selectMedia);
@@ -31,8 +32,7 @@ export function LibraryTab() {
     (currentPath !== null && item.path === currentPath);
 
   const handlePlayCollection = (tracks: typeof filteredTracks) => {
-    const first = tracks[0];
-    if (first) void playLibraryTrack(first.id);
+    void playLibraryCollection(tracks);
   };
 
   const addButton = (

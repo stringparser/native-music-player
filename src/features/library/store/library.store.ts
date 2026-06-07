@@ -31,6 +31,7 @@ interface LibraryState {
   addMediaToQueue: (items: MediaItem[]) => Promise<void>;
   addLibraryTrackToQueue: (trackId: string) => Promise<void>;
   playLibraryTrack: (trackId: string) => Promise<void>;
+  playLibraryCollection: (tracks: MediaItem[]) => Promise<void>;
   loadPlaylistToQueue: (playlistId: string) => Promise<void>;
   removeFromQueue: (id: string) => Promise<void>;
   moveQueueItem: (id: string, direction: "up" | "down") => Promise<void>;
@@ -142,6 +143,20 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
 
     get().selectMedia(result.track.id);
     await playbackService.play(result.track);
+  },
+
+  playLibraryCollection: async (tracks) => {
+    if (tracks.length === 0) return;
+
+    const { nowPlayingId } = usePlaybackStore.getState();
+    if (nowPlayingId) {
+      void playbackService.stop();
+    }
+
+    const first = tracks[0];
+    set({ queue: tracks, selectedMediaId: first.id });
+    await persistState();
+    await playbackService.play(first);
   },
 
   loadPlaylistToQueue: async (playlistId) => {
