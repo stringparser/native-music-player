@@ -8,6 +8,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useLibraryStore } from "../../../library/store/library.store";
+import { useNavigationStore } from "../../../navigation/store/navigation.store";
 import { formatPlaybackTime } from "../../services/time-format.service";
 import { usePlaybackStore } from "../../store/playback.store";
 import styles from "./PlayerBar.module.css";
@@ -22,6 +23,8 @@ export function PlayerBar() {
   const nowPlayingId = usePlaybackStore((s) => s.nowPlayingId);
   const library = useLibraryStore((s) => s.library);
   const queue = useLibraryStore((s) => s.queue);
+  const revealTrackInLibrary = useLibraryStore((s) => s.revealTrackInLibrary);
+  const setActiveView = useNavigationStore((s) => s.setActiveView);
   const togglePlay = usePlaybackStore((s) => s.togglePlay);
   const next = usePlaybackStore((s) => s.next);
   const previous = usePlaybackStore((s) => s.previous);
@@ -32,9 +35,18 @@ export function PlayerBar() {
   const nowPlaying =
     library.find((item) => item.id === nowPlayingId) ??
     queue.find((item) => item.id === nowPlayingId);
+  const isInLibrary = Boolean(
+    nowPlayingId && library.some((item) => item.id === nowPlayingId),
+  );
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const playbackLabel = isPlaying ? "Pause" : isPaused ? "Resume" : "Play";
+
+  const handleRevealInLibrary = () => {
+    if (!nowPlayingId || !isInLibrary) return;
+    setActiveView("library");
+    revealTrackInLibrary(nowPlayingId);
+  };
 
   const handleMuteToggle = () => {
     if (volume === 0) {
@@ -50,7 +62,18 @@ export function PlayerBar() {
       <div className={styles.trackInfo}>
         {nowPlaying ? (
           <>
-            <span className={styles.trackTitle}>{nowPlaying.title}</span>
+            {isInLibrary ? (
+              <button
+                type="button"
+                className={styles.trackTitleBtn}
+                title="Show in library"
+                onClick={handleRevealInLibrary}
+              >
+                {nowPlaying.title}
+              </button>
+            ) : (
+              <span className={styles.trackTitle}>{nowPlaying.title}</span>
+            )}
             {nowPlaying.artist && (
               <span className={styles.trackArtist}>{nowPlaying.artist}</span>
             )}

@@ -1,11 +1,18 @@
 import { create } from "zustand";
 import type { MediaItem, Playlist } from "../model/types";
 import { toastService } from "../../../shared/services/toast.service";
+import { filterMediaByQuery } from "../services/media-filter.service";
+import { getParentFolderPath } from "../services/media-folder.service";
 import { playlistService } from "../services/playlist.service";
 import { queueService } from "../services/queue.service";
 import { storageService } from "../services/storage.service";
 import { usePlaybackStore } from "../../playback/store/playback.store";
 import { playbackService } from "../../playback/services/playback.service";
+
+interface RevealInLibraryRequest {
+  trackId: string;
+  folderPath: string;
+}
 
 interface LibraryState {
   library: MediaItem[];
@@ -15,10 +22,13 @@ interface LibraryState {
   selectedPlaylistId: string | null;
   searchQuery: string;
   hydrated: boolean;
+  revealInLibraryRequest: RevealInLibraryRequest | null;
 
   selectMedia: (id: string | null) => void;
   selectPlaylist: (id: string | null) => void;
   setSearchQuery: (query: string) => void;
+  revealTrackInLibrary: (trackId: string) => boolean;
+  clearRevealInLibraryRequest: () => void;
   setLibraryData: (
     library: MediaItem[],
     playlists: Playlist[],
@@ -60,12 +70,33 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   selectedPlaylistId: null,
   searchQuery: "",
   hydrated: false,
+  revealInLibraryRequest: null,
 
   selectMedia: (id) => set({ selectedMediaId: id, selectedPlaylistId: null }),
 
   selectPlaylist: (id) => set({ selectedPlaylistId: id, selectedMediaId: null }),
 
   setSearchQuery: (query) => set({ searchQuery: query }),
+
+  revealTrackInLibrary: (trackId) => {
+    const track = get().library.find((item) => item.id === trackId);
+    if (!track) return false;
+
+    const folderPath = getParentFolderPath(track.path);
+    const visibleInSearch = filterMediaByQuery(get().library, get().searchQuery).some(
+      (item) => item.id === trackId,
+    );
+
+    set({
+      selectedMediaId: trackId,
+      selectedPlaylistId: null,
+      searchQuery: visibleInSearch ? get().searchQuery : "",
+      revealInLibraryRequest: { trackId, folderPath },
+    });
+    return true;
+  },
+
+  clearRevealInLibraryRequest: () => set({ revealInLibraryRequest: null }),
 
   setLibraryData: (library, playlists, queue) =>
     set({ library, playlists, queue }),

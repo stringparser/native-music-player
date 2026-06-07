@@ -10,13 +10,15 @@ import { AlbumCover } from "../AlbumCover/AlbumCover";
 import { AlbumTrackList } from "../AlbumTrackList/AlbumTrackList";
 import { MediaTabToolbar } from "../MediaTabToolbar/MediaTabToolbar";
 import { getRowEndIndex, readGridColumnCount } from "./library-grid";
-import { scrollAlbumCoverIntoView } from "./library-scroll";
+import { getLibraryScrollContext, scrollAlbumCoverIntoView } from "./library-scroll";
 import styles from "./LibraryTab.module.css";
 
 export function LibraryTab() {
   const library = useLibraryStore((s) => s.library);
   const searchQuery = useLibraryStore((s) => s.searchQuery);
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
+  const revealInLibraryRequest = useLibraryStore((s) => s.revealInLibraryRequest);
+  const clearRevealInLibraryRequest = useLibraryStore((s) => s.clearRevealInLibraryRequest);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
   const playLibraryCollection = useLibraryStore((s) => s.playLibraryCollection);
   const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
@@ -29,6 +31,7 @@ export function LibraryTab() {
   const [gridColumns, setGridColumns] = useState(1);
   const gridRef = useRef<HTMLDivElement>(null);
   const coverRefs = useRef(new Map<string, HTMLDivElement>());
+  const [scrollToFolderPath, setScrollToFolderPath] = useState<string | null>(null);
 
   const filteredTracks = filterMediaByQuery(library, searchQuery);
   const folderGroups = groupMediaByFolder(filteredTracks);
@@ -59,21 +62,29 @@ export function LibraryTab() {
     }
   };
 
+  useEffect(() => {
+    if (!revealInLibraryRequest) return;
+
+    setExpandedFolderPath(revealInLibraryRequest.folderPath);
+    setScrollToFolderPath(revealInLibraryRequest.folderPath);
+    clearRevealInLibraryRequest();
+  }, [revealInLibraryRequest, clearRevealInLibraryRequest]);
+
   useLayoutEffect(() => {
     if (!expandedFolderPath) return;
 
     const coverEl = coverRefs.current.get(expandedFolderPath);
-    const scrollContainer = gridRef.current?.closest(
-      "[data-scroll-container]",
-    ) as HTMLElement | null;
-    const stickyHeader = scrollContainer?.querySelector(
-      "[data-media-tab-toolbar]",
-    ) as HTMLElement | null;
+    if (!coverEl) return;
 
-    if (!coverEl || !scrollContainer) return;
+    const { scrollContainer, stickyHeader } = getLibraryScrollContext(coverEl);
+    if (!scrollContainer) return;
+
+    if (scrollToFolderPath === expandedFolderPath) {
+      setScrollToFolderPath(null);
+    }
 
     scrollAlbumCoverIntoView(coverEl, scrollContainer, stickyHeader);
-  }, [expandedFolderPath, trackListInsertIndex]);
+  }, [expandedFolderPath, trackListInsertIndex, scrollToFolderPath]);
 
   useLayoutEffect(() => {
     const grid = gridRef.current;
