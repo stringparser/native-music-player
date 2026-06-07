@@ -110,8 +110,8 @@
 
 .trackListActions {
   display: flex;
-  justify-content: flex-end;
-  padding: 0 12px 4px;
+  justify-content: flex-start;
+  padding: 0 12px 16px;
 }
 
 @media (max-width: 720px) {
