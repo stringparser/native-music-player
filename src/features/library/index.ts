@@ -1,6 +1,7 @@
 export type { LibraryData, MediaItem, Playlist } from "./model/types";
 export { filterMediaByQuery, filterPlaylistsByQuery } from "./services/media-filter.service";
 export { LibraryImportService } from "./services/library-import.service";
+export { mediaScanService } from "./services/media-scan.service";
 export { storageService } from "./services/storage.service";
 export { queueService } from "./services/queue.service";
 export {

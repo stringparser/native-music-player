@@ -17,4 +17,15 @@ export const FileDialogClient = {
     if (!result) return [];
     return Array.isArray(result) ? result : [result];
   },
+
+  async pickAudioFolders(): Promise<string[]> {
+    const result = await open({
+      directory: true,
+      multiple: true,
+      title: "Select folders",
+    });
+
+    if (!result) return [];
+    return Array.isArray(result) ? result : [result];
+  },
 };

@@ -163,7 +163,6 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   },
 
   removeFromQueue: async (id) => {
-    const track = get().queue.find((item) => item.id === id);
     stopIfPlayingTrack(id);
     set((state) => ({
       queue: state.queue.filter((item) => item.id !== id),
@@ -171,9 +170,6 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
         state.selectedMediaId === id ? null : state.selectedMediaId,
     }));
     await persistState();
-    if (track) {
-      toastService.info(`Removed "${track.title}" from queue`);
-    }
   },
 
   moveQueueItem: async (id, direction) => {
@@ -196,10 +192,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     }
 
     set({ queue: [], selectedMediaId: null });
-    const saved = await persistState();
-    if (saved) {
-      toastService.info("Queue cleared");
-    }
+    await persistState();
   },
 
   createPlaylist: async (name, trackPaths = []) => {

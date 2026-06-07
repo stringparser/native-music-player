@@ -1,7 +1,9 @@
+mod fs;
 mod metadata;
 mod playback;
 mod storage;
 
+use fs::fs_scan_audio_paths;
 use metadata::metadata_extract;
 use playback::{
     init_playback, playback_pause, playback_play, playback_resume, playback_seek,
@@ -29,6 +31,7 @@ pub fn run() {
             storage_load,
             storage_save,
             metadata_extract,
+            fs_scan_audio_paths,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

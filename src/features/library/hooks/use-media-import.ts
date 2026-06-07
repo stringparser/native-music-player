@@ -23,7 +23,7 @@ export function useMediaImport(target: ImportTarget) {
         await addMediaToQueue(items);
       }
     } catch {
-      toastService.error("Failed to import files");
+      toastService.error("Failed to import folders");
     } finally {
       setImporting(false);
     }
