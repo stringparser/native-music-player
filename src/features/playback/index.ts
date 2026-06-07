@@ -1,3 +1,4 @@
+export { usePlaybackShortcuts } from "./hooks/use-playback-shortcuts";
 export {
   formatDuration,
   formatPlaybackTime,

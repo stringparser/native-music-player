@@ -5,7 +5,7 @@ import { useMediaImport } from "../../hooks/use-media-import";
 import { filterMediaByQuery } from "../../services/media-filter.service";
 import { groupMediaByFolder } from "../../services/media-folder.service";
 import { useLibraryStore } from "../../store/library.store";
-import { LibraryToolbar } from "../LibraryToolbar/LibraryToolbar";
+import { MediaTabToolbar } from "../MediaTabToolbar/MediaTabToolbar";
 import { MediaCollection } from "../MediaCollection/MediaCollection";
 import styles from "./LibraryTab.module.css";
 
@@ -47,9 +47,13 @@ export function LibraryTab() {
     <div className={styles.libraryTab}>
       {hasVisibleTracks ? (
         <>
-          <LibraryToolbar
-            trackCount={filteredTracks.length}
-            folderCount={folderGroups.length}
+          <MediaTabToolbar
+            primaryLabel={
+              filteredTracks.length === 1 ? "1 track" : `${filteredTracks.length} tracks`
+            }
+            secondaryLabel={
+              folderGroups.length === 1 ? "1 folder" : `${folderGroups.length} folders`
+            }
             onImport={() => void importMedia()}
             isImporting={isImporting}
           />

@@ -6,7 +6,7 @@ import { filterMediaByQuery } from "../../services/media-filter.service";
 import { useLibraryStore } from "../../store/library.store";
 import { usePlaybackStore } from "../../../playback/store/playback.store";
 import { MediaTable } from "../MediaTable/MediaTable";
-import { MediaTableActionsHeader } from "../MediaTable/MediaTableActionsHeader";
+import { MediaTabToolbar } from "../MediaTabToolbar/MediaTabToolbar";
 import styles from "../LibraryTab/LibraryTab.module.css";
 
 export function QueueTab() {
@@ -20,6 +20,7 @@ export function QueueTab() {
 
   const filtered = filterMediaByQuery(queue, searchQuery);
   const hasMedia = filtered.length > 0;
+  const trackLabel = filtered.length === 1 ? "1 track" : `${filtered.length} tracks`;
 
   const addButton = (
     <AddMediaButton
@@ -32,41 +33,42 @@ export function QueueTab() {
   return (
     <div className={styles.mediaTab}>
       {hasMedia ? (
-        <MediaTable
-          items={filtered}
-          onPlay={(item) => void playItem(item)}
-          renderActionsHeader={() => (
-            <MediaTableActionsHeader
-              onAdd={() => void importMedia()}
-              isImporting={isImporting}
-              onClearAll={() => void clearQueue()}
-              clearDisabled={queue.length === 0}
-            />
-          )}
-          renderRowActions={(item) => (
-            <>
-              <IconButton
-                title="Move up"
-                onClick={() => void moveQueueItem(item.id, "up")}
-              >
-                <ChevronUp size={14} />
-              </IconButton>
-              <IconButton
-                title="Move down"
-                onClick={() => void moveQueueItem(item.id, "down")}
-              >
-                <ChevronDown size={14} />
-              </IconButton>
-              <IconButton
-                title="Remove from queue"
-                variant="danger"
-                onClick={() => void removeFromQueue(item.id)}
-              >
-                <Trash2 size={14} />
-              </IconButton>
-            </>
-          )}
-        />
+        <>
+          <MediaTabToolbar
+            primaryLabel={trackLabel}
+            onImport={() => void importMedia()}
+            isImporting={isImporting}
+            onClearAll={() => void clearQueue()}
+            clearDisabled={queue.length === 0}
+          />
+          <MediaTable
+            items={filtered}
+            onPlay={(item) => void playItem(item)}
+            renderRowActions={(item) => (
+              <>
+                <IconButton
+                  title="Move up"
+                  onClick={() => void moveQueueItem(item.id, "up")}
+                >
+                  <ChevronUp size={14} />
+                </IconButton>
+                <IconButton
+                  title="Move down"
+                  onClick={() => void moveQueueItem(item.id, "down")}
+                >
+                  <ChevronDown size={14} />
+                </IconButton>
+                <IconButton
+                  title="Remove from queue"
+                  variant="danger"
+                  onClick={() => void removeFromQueue(item.id)}
+                >
+                  <Trash2 size={14} />
+                </IconButton>
+              </>
+            )}
+          />
+        </>
       ) : (
         <EmptyState
           title="Your queue is empty"
