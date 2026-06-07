@@ -10,6 +10,7 @@ import { AlbumCover } from "../AlbumCover/AlbumCover";
 import { AlbumTrackList } from "../AlbumTrackList/AlbumTrackList";
 import { MediaTabToolbar } from "../MediaTabToolbar/MediaTabToolbar";
 import { getRowEndIndex, readGridColumnCount } from "./library-grid";
+import { scrollAlbumCoverIntoView } from "./library-scroll";
 import styles from "./LibraryTab.module.css";
 
 export function LibraryTab() {
@@ -27,6 +28,7 @@ export function LibraryTab() {
   const [expandedFolderPath, setExpandedFolderPath] = useState<string | null>(null);
   const [gridColumns, setGridColumns] = useState(1);
   const gridRef = useRef<HTMLDivElement>(null);
+  const coverRefs = useRef(new Map<string, HTMLDivElement>());
 
   const filteredTracks = filterMediaByQuery(library, searchQuery);
   const folderGroups = groupMediaByFolder(filteredTracks);
@@ -48,6 +50,30 @@ export function LibraryTab() {
   const toggleFolder = (folderPath: string) => {
     setExpandedFolderPath((current) => (current === folderPath ? null : folderPath));
   };
+
+  const bindCoverRef = (folderPath: string, element: HTMLDivElement | null) => {
+    if (element) {
+      coverRefs.current.set(folderPath, element);
+    } else {
+      coverRefs.current.delete(folderPath);
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (!expandedFolderPath) return;
+
+    const coverEl = coverRefs.current.get(expandedFolderPath);
+    const scrollContainer = gridRef.current?.closest(
+      "[data-scroll-container]",
+    ) as HTMLElement | null;
+    const stickyHeader = scrollContainer?.querySelector(
+      "[data-media-tab-toolbar]",
+    ) as HTMLElement | null;
+
+    if (!coverEl || !scrollContainer) return;
+
+    scrollAlbumCoverIntoView(coverEl, scrollContainer, stickyHeader);
+  }, [expandedFolderPath, trackListInsertIndex]);
 
   useLayoutEffect(() => {
     const grid = gridRef.current;
@@ -108,6 +134,7 @@ export function LibraryTab() {
             {folderGroups.map((group, index) => (
               <Fragment key={group.folderPath}>
                 <AlbumCover
+                  ref={(element) => bindCoverRef(group.folderPath, element)}
                   folderName={group.folderName}
                   isExpanded={expandedFolderPath === group.folderPath}
                   onClick={() => toggleFolder(group.folderPath)}

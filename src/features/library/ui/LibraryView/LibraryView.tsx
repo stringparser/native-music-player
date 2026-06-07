@@ -8,7 +8,7 @@ export function LibraryView() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.content}>
+      <div className={styles.content} data-scroll-container>
         {activeView === "queue" ? <QueueTab /> : <LibraryTab />}
       </div>
     </main>

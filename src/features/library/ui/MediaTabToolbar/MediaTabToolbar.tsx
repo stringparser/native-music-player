@@ -20,7 +20,7 @@ export function MediaTabToolbar({
   clearDisabled = false,
 }: MediaTabToolbarProps) {
   return (
-    <div className={styles.toolbar}>
+    <div className={styles.toolbar} data-media-tab-toolbar>
       <div className={styles.summary}>
         <span className={styles.summaryPrimary}>{primaryLabel}</span>
         {secondaryLabel && (
