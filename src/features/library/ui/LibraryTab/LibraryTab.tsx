@@ -1,3 +1,4 @@
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { EmptyState } from "../../../../shared";
 import { AddMediaButton } from "../../../../shared/ui/AddMediaButton/AddMediaButton";
 import { usePlaybackStore } from "../../../playback/store/playback.store";
@@ -5,8 +6,10 @@ import { useMediaImport } from "../../hooks/use-media-import";
 import { filterMediaByQuery } from "../../services/media-filter.service";
 import { groupMediaByFolder } from "../../services/media-folder.service";
 import { useLibraryStore } from "../../store/library.store";
+import { AlbumCover } from "../AlbumCover/AlbumCover";
+import { AlbumTrackList } from "../AlbumTrackList/AlbumTrackList";
 import { MediaTabToolbar } from "../MediaTabToolbar/MediaTabToolbar";
-import { MediaCollection } from "../MediaCollection/MediaCollection";
+import { getRowEndIndex, readGridColumnCount } from "./library-grid";
 import styles from "./LibraryTab.module.css";
 
 export function LibraryTab() {
@@ -14,16 +17,26 @@ export function LibraryTab() {
   const searchQuery = useLibraryStore((s) => s.searchQuery);
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
-  const playLibraryCollection = useLibraryStore((s) => s.playLibraryCollection);
   const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
   const addMediaToQueue = useLibraryStore((s) => s.addMediaToQueue);
   const selectMedia = useLibraryStore((s) => s.selectMedia);
   const nowPlayingId = usePlaybackStore((s) => s.nowPlayingId);
   const currentPath = usePlaybackStore((s) => s.currentPath);
   const { importMedia, isImporting } = useMediaImport("library");
+  const [expandedFolderPath, setExpandedFolderPath] = useState<string | null>(null);
+  const [gridColumns, setGridColumns] = useState(1);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const filteredTracks = filterMediaByQuery(library, searchQuery);
   const folderGroups = groupMediaByFolder(filteredTracks);
+  const expandedGroup = folderGroups.find((g) => g.folderPath === expandedFolderPath);
+  const expandedIndex = expandedFolderPath
+    ? folderGroups.findIndex((g) => g.folderPath === expandedFolderPath)
+    : -1;
+  const trackListInsertIndex =
+    expandedIndex >= 0
+      ? getRowEndIndex(expandedIndex, gridColumns, folderGroups.length)
+      : -1;
   const hasLibrary = library.length > 0;
   const hasVisibleTracks = filteredTracks.length > 0;
 
@@ -31,9 +44,29 @@ export function LibraryTab() {
     item.id === nowPlayingId ||
     (currentPath !== null && item.path === currentPath);
 
-  const handlePlayCollection = (tracks: typeof filteredTracks) => {
-    void playLibraryCollection(tracks);
+  const toggleFolder = (folderPath: string) => {
+    setExpandedFolderPath((current) => (current === folderPath ? null : folderPath));
   };
+
+  useLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const updateColumns = () => {
+      setGridColumns(readGridColumnCount(grid));
+    };
+
+    updateColumns();
+    const observer = new ResizeObserver(updateColumns);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, [folderGroups.length]);
+
+  useEffect(() => {
+    if (expandedFolderPath && !expandedGroup) {
+      setExpandedFolderPath(null);
+    }
+  }, [expandedFolderPath, expandedGroup]);
 
   const addButton = (
     <AddMediaButton
@@ -42,6 +75,18 @@ export function LibraryTab() {
       disabled={isImporting}
     />
   );
+
+  const trackList = expandedGroup ? (
+    <AlbumTrackList
+      tracks={expandedGroup.tracks}
+      selectedId={selectedMediaId}
+      isNowPlaying={isNowPlaying}
+      onSelectTrack={(item) => selectMedia(item.id)}
+      onPlayTrack={(item) => void playLibraryTrack(item.id)}
+      onAddTrackToQueue={(item) => void addLibraryTrackToQueue(item.id)}
+      onAddCollectionToQueue={(tracks) => void addMediaToQueue(tracks)}
+    />
+  ) : null;
 
   return (
     <div className={styles.libraryTab}>
@@ -57,20 +102,18 @@ export function LibraryTab() {
             onImport={() => void importMedia()}
             isImporting={isImporting}
           />
-          <div className={styles.collections}>
-            {folderGroups.map((group) => (
-              <MediaCollection
-                key={group.folderPath}
-                folderName={group.folderName}
-                tracks={group.tracks}
-                selectedId={selectedMediaId}
-                isNowPlaying={isNowPlaying}
-                onSelectTrack={(item) => selectMedia(item.id)}
-                onPlayTrack={(item) => void playLibraryTrack(item.id)}
-                onPlayCollection={handlePlayCollection}
-                onAddTrackToQueue={(item) => void addLibraryTrackToQueue(item.id)}
-                onAddCollectionToQueue={(tracks) => void addMediaToQueue(tracks)}
-              />
+          <div ref={gridRef} className={styles.coverGrid}>
+            {folderGroups.map((group, index) => (
+              <Fragment key={group.folderPath}>
+                <AlbumCover
+                  folderName={group.folderName}
+                  isExpanded={expandedFolderPath === group.folderPath}
+                  onClick={() => toggleFolder(group.folderPath)}
+                />
+                {trackList && index === trackListInsertIndex && (
+                  <div className={styles.trackListRow}>{trackList}</div>
+                )}
+              </Fragment>
             ))}
           </div>
         </>

@@ -4,7 +4,13 @@
   flex-direction: column;
 }
 
-.collections {
-  display: flex;
-  flex-direction: column;
+.coverGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 24px 28px;
+}
+
+.trackListRow {
+  grid-column: 1 / -1;
 }
