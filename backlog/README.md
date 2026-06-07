@@ -10,6 +10,7 @@ Implement backlog items using the same engineering principles in [`PLAN.md`](../
 |------|------|
 | Create playlists (UI) | [create-playlists.md](./create-playlists.md) |
 | Multi-select in library | [multi-select-library.md](./multi-select-library.md) |
+| Bulk actions (library & queue) | [bulk-actions.md](./bulk-actions.md) |
 | Group tracks by folder | [group-by-folder.md](./group-by-folder.md) |
 | Queue toolbar | [queue-toolbar.md](./queue-toolbar.md) |
 | Tab bar polish | [tab-bar-polish.md](./tab-bar-polish.md) |

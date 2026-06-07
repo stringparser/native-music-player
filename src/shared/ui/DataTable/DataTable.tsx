@@ -34,7 +34,7 @@ export function DataTable<T>({
 
   const rowClassName = (item: T) => {
     const key = getRowKey(item);
-    const classes = [];
+    const classes = [styles.row];
     if (selectedId === key) classes.push(styles.selected);
     if (isNowPlaying?.(item)) classes.push(styles.nowPlaying);
     return classes.join(" ");

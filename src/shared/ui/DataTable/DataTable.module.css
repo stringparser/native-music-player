@@ -29,9 +29,11 @@
   white-space: nowrap;
 }
 
-.table tbody tr {
+.row {
   cursor: pointer;
   transition: background 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .table tbody tr td:first-child {

@@ -1,4 +1,4 @@
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import styles from "./AddMediaButton.module.css";
 
 interface AddMediaButtonProps {
@@ -19,7 +19,7 @@ export function AddMediaButton({
       onClick={onAdd}
       disabled={disabled || loading}
     >
-      {loading ? <Loader2 size={16} className={styles.spinner} /> : <Plus size={16} />}
+      {loading && <Loader2 size={16} className={styles.spinner} />}
       {loading ? "Importing…" : "Add"}
     </button>
   );

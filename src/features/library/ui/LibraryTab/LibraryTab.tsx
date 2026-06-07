@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { EmptyState, IconButton } from "../../../../shared";
 import { AddMediaButton } from "../../../../shared/ui/AddMediaButton/AddMediaButton";
 import { useMediaImport } from "../../hooks/use-media-import";
@@ -14,7 +14,7 @@ export function LibraryTab() {
   const playlists = useLibraryStore((s) => s.playlists);
   const searchQuery = useLibraryStore((s) => s.searchQuery);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
-  const removeFromLibrary = useLibraryStore((s) => s.removeFromLibrary);
+  const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
   const { importMedia, isImporting } = useMediaImport("library");
 
   const filteredTracks = filterMediaByQuery(library, searchQuery);
@@ -41,18 +41,17 @@ export function LibraryTab() {
             )}
             renderRowActions={(item) => (
               <IconButton
-                title="Remove from library"
-                variant="danger"
-                onClick={() => void removeFromLibrary(item.id)}
+                title="Add to queue"
+                onClick={() => void addLibraryTrackToQueue(item.id)}
               >
-                <Trash2 size={14} />
+                <Plus size={16} strokeWidth={2.25} />
               </IconButton>
             )}
           />
         ) : (
           <EmptyState
             title="Your library is empty"
-            description="Import audio files, then double-click a track to play and add it to the queue."
+            description="Import audio files, then use + to add tracks to the queue or double-click to play."
             action={addButton}
           />
         )}
