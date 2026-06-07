@@ -15,6 +15,7 @@ export function LibraryTab() {
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
   const playLibraryTrack = useLibraryStore((s) => s.playLibraryTrack);
   const addLibraryTrackToQueue = useLibraryStore((s) => s.addLibraryTrackToQueue);
+  const addMediaToQueue = useLibraryStore((s) => s.addMediaToQueue);
   const selectMedia = useLibraryStore((s) => s.selectMedia);
   const nowPlayingId = usePlaybackStore((s) => s.nowPlayingId);
   const currentPath = usePlaybackStore((s) => s.currentPath);
@@ -64,6 +65,7 @@ export function LibraryTab() {
                 onPlayTrack={(item) => void playLibraryTrack(item.id)}
                 onPlayCollection={handlePlayCollection}
                 onAddTrackToQueue={(item) => void addLibraryTrackToQueue(item.id)}
+                onAddCollectionToQueue={(tracks) => void addMediaToQueue(tracks)}
               />
             ))}
           </div>

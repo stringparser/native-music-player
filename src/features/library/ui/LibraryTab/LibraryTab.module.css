@@ -1,7 +1,7 @@
-.libraryTab {
+.libraryTab,
+.mediaTab {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
 }
 
 .collections {

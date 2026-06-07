@@ -1,4 +1,5 @@
-import { Play } from "lucide-react";
+import { Play, Plus } from "lucide-react";
+import { ToolbarButton } from "../../../../shared";
 import type { MediaItem } from "../../model/types";
 import {
   collectionArtist,
@@ -16,6 +17,7 @@ interface MediaCollectionProps {
   onPlayTrack: (item: MediaItem) => void;
   onPlayCollection: (tracks: MediaItem[]) => void;
   onAddTrackToQueue?: (item: MediaItem) => void;
+  onAddCollectionToQueue?: (tracks: MediaItem[]) => void;
 }
 
 export function MediaCollection({
@@ -27,6 +29,7 @@ export function MediaCollection({
   onPlayTrack,
   onPlayCollection,
   onAddTrackToQueue,
+  onAddCollectionToQueue,
 }: MediaCollectionProps) {
   const artworkColor = folderAccentColor(folderName);
   const artist = collectionArtist(tracks);
@@ -68,12 +71,20 @@ export function MediaCollection({
           </header>
 
           <div className={styles.trackList}>
+            {onAddCollectionToQueue && (
+              <div className={styles.trackListActions}>
+                <ToolbarButton
+                  label="Add all to queue"
+                  icon={<Plus size={14} strokeWidth={2.25} />}
+                  onClick={() => onAddCollectionToQueue(tracks)}
+                />
+              </div>
+            )}
             {tracks.map((track, index) => (
               <MediaTrackRow
                 key={track.id}
                 track={track}
                 index={index}
-                artworkColor={artworkColor}
                 selected={selectedId === track.id}
                 nowPlaying={isNowPlaying?.(track)}
                 onSelect={() => onSelectTrack(track)}

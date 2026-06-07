@@ -4,7 +4,6 @@
   justify-content: space-between;
   gap: 16px;
   padding: 8px 12px;
-  border-radius: var(--radius-sm);
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -32,16 +31,9 @@
 .leading {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   flex: 1;
-}
-
-.thumb {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  flex-shrink: 0;
 }
 
 .index {

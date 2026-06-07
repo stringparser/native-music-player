@@ -7,7 +7,6 @@ import styles from "./MediaTrackRow.module.css";
 interface MediaTrackRowProps {
   track: MediaItem;
   index: number;
-  artworkColor: string;
   selected?: boolean;
   nowPlaying?: boolean;
   onSelect: () => void;
@@ -18,7 +17,6 @@ interface MediaTrackRowProps {
 export function MediaTrackRow({
   track,
   index,
-  artworkColor,
   selected = false,
   nowPlaying = false,
   onSelect,
@@ -36,11 +34,6 @@ export function MediaTrackRow({
   return (
     <div className={rowClass} onClick={onSelect} onDoubleClick={onDoubleClick}>
       <div className={styles.leading}>
-        <div
-          className={styles.thumb}
-          style={{ backgroundColor: artworkColor }}
-          aria-hidden="true"
-        />
         <span className={styles.index}>{index + 1}</span>
         <span className={styles.dot} aria-hidden="true">
           ·
