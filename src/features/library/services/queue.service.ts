@@ -36,6 +36,19 @@ class QueueServiceImpl {
     return unique[0] ?? null;
   }
 
+  ensureQueueTrackFromLibrary(
+    trackId: string,
+  ): { track: MediaItem; isNew: boolean } | null {
+    const { library, queue } = useLibraryStore.getState();
+    const libraryTrack = library.find((item) => item.id === trackId);
+    if (!libraryTrack) return null;
+
+    const existing = queue.find((item) => item.path === libraryTrack.path);
+    if (existing) return { track: existing, isNew: false };
+
+    return { track: libraryTrack, isNew: true };
+  }
+
   buildQueueFromPlaylist(playlist: Playlist, library: MediaItem[]): MediaItem[] {
     return resolveTracksByPaths(playlist.trackPaths, library);
   }

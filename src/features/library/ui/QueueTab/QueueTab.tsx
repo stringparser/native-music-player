@@ -1,9 +1,12 @@
-import { ChevronDown, ChevronUp, Trash2, XCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { EmptyState, IconButton } from "../../../../shared";
+import { AddMediaButton } from "../../../../shared/ui/AddMediaButton/AddMediaButton";
+import { useMediaImport } from "../../hooks/use-media-import";
 import { filterMediaByQuery } from "../../services/media-filter.service";
 import { useLibraryStore } from "../../store/library.store";
 import { usePlaybackStore } from "../../../playback/store/playback.store";
 import { MediaTable } from "../MediaTable/MediaTable";
+import { MediaTableActionsHeader } from "../MediaTable/MediaTableActionsHeader";
 import styles from "../LibraryTab/LibraryTab.module.css";
 
 export function QueueTab() {
@@ -13,9 +16,18 @@ export function QueueTab() {
   const moveQueueItem = useLibraryStore((s) => s.moveQueueItem);
   const clearQueue = useLibraryStore((s) => s.clearQueue);
   const playItem = usePlaybackStore((s) => s.playItem);
+  const { importMedia, isImporting } = useMediaImport("queue");
 
   const filtered = filterMediaByQuery(queue, searchQuery);
   const hasMedia = filtered.length > 0;
+
+  const addButton = (
+    <AddMediaButton
+      onAdd={() => void importMedia()}
+      loading={isImporting}
+      disabled={isImporting}
+    />
+  );
 
   return (
     <div className={styles.mediaTab}>
@@ -24,14 +36,12 @@ export function QueueTab() {
           items={filtered}
           onPlay={(item) => void playItem(item)}
           renderActionsHeader={() => (
-            <IconButton
-              title="Clear queue"
-              variant="danger"
-              disabled={queue.length === 0}
-              onClick={() => void clearQueue()}
-            >
-              <XCircle size={14} />
-            </IconButton>
+            <MediaTableActionsHeader
+              onAdd={() => void importMedia()}
+              isImporting={isImporting}
+              onClearAll={() => void clearQueue()}
+              clearDisabled={queue.length === 0}
+            />
           )}
           renderRowActions={(item) => (
             <>
@@ -60,7 +70,8 @@ export function QueueTab() {
       ) : (
         <EmptyState
           title="Your queue is empty"
-          description="Add tracks from the library, or load a playlist to build what plays next."
+          description="Add tracks from the library, or import files to build what plays next."
+          action={addButton}
         />
       )}
     </div>

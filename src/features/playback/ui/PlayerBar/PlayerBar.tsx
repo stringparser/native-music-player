@@ -4,7 +4,6 @@ import {
   Play,
   SkipBack,
   SkipForward,
-  Square,
   Volume2,
   VolumeX,
 } from "lucide-react";
@@ -24,7 +23,6 @@ export function PlayerBar() {
   const library = useLibraryStore((s) => s.library);
   const queue = useLibraryStore((s) => s.queue);
   const togglePlay = usePlaybackStore((s) => s.togglePlay);
-  const stop = usePlaybackStore((s) => s.stop);
   const next = usePlaybackStore((s) => s.next);
   const previous = usePlaybackStore((s) => s.previous);
   const setVolume = usePlaybackStore((s) => s.setVolume);
@@ -86,14 +84,6 @@ export function PlayerBar() {
           onClick={() => void next()}
         >
           <SkipForward size={18} />
-        </button>
-        <button
-          type="button"
-          className={styles.controlBtn}
-          title="Stop"
-          onClick={() => void stop()}
-        >
-          <Square size={16} />
         </button>
       </div>
 

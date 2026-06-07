@@ -1,5 +1,6 @@
 import { formatDuration } from "../../../playback/services/time-format.service";
 import { usePlaybackStore } from "../../../playback/store/playback.store";
+import { ToolbarButton } from "../../../../shared";
 import { DataTable, type DataTableColumn } from "../../../../shared/ui/DataTable/DataTable";
 import type { MediaItem } from "../../model/types";
 import { useLibraryStore } from "../../store/library.store";
@@ -40,6 +41,14 @@ interface MediaTableProps {
   renderActionsHeader?: () => React.ReactNode;
 }
 
+function ActionsHeaderPlaceholder() {
+  return (
+    <span className={tableStyles.actionsHeaderPlaceholder} aria-hidden="true">
+      <ToolbarButton label="Clear All" variant="danger" disabled />
+    </span>
+  );
+}
+
 export function MediaTable({
   items,
   onPlay,
@@ -48,6 +57,7 @@ export function MediaTable({
 }: MediaTableProps) {
   const selectedMediaId = useLibraryStore((s) => s.selectedMediaId);
   const nowPlayingId = usePlaybackStore((s) => s.nowPlayingId);
+  const currentPath = usePlaybackStore((s) => s.currentPath);
   const selectMedia = useLibraryStore((s) => s.selectMedia);
 
   return (
@@ -56,11 +66,17 @@ export function MediaTable({
       columns={mediaColumns}
       getRowKey={(item) => item.id}
       selectedId={selectedMediaId}
-      nowPlayingId={nowPlayingId}
+      isNowPlaying={(item) =>
+        item.id === nowPlayingId ||
+        (currentPath !== null && item.path === currentPath)
+      }
       onSelect={(item) => selectMedia(item.id)}
       onDoubleClick={(item) => onPlay?.(item)}
       renderRowActions={renderRowActions}
-      renderActionsHeader={renderActionsHeader}
+      renderActionsHeader={
+        renderActionsHeader ??
+        (renderRowActions ? () => <ActionsHeaderPlaceholder /> : undefined)
+      }
     />
   );
 }

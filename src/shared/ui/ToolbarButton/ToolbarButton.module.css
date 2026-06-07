@@ -23,7 +23,13 @@
   cursor: not-allowed;
 }
 
-.danger:hover:not(:disabled) {
+.danger {
   color: var(--color-error);
   border-color: rgba(229, 115, 115, 0.35);
+}
+
+.danger:hover:not(:disabled) {
+  color: var(--color-error);
+  border-color: rgba(229, 115, 115, 0.55);
+  background: rgba(229, 115, 115, 0.08);
 }

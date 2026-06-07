@@ -34,6 +34,10 @@
   transition: background 0.1s;
 }
 
+.table tbody tr td:first-child {
+  box-shadow: inset 3px 0 0 transparent;
+}
+
 .table tbody tr:hover {
   background: var(--bg-hover);
 }
@@ -42,7 +46,7 @@
   background: var(--accent-muted);
 }
 
-.table tbody tr.nowPlaying {
+.table tbody tr.nowPlaying td:first-child {
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
@@ -51,14 +55,25 @@
   color: var(--text-primary);
 }
 
-.colActions {
-  width: 120px;
+.table col.colActions,
+.table th.colActions,
+.table td.colActions {
+  width: 168px;
   text-align: right;
 }
 
-.colActionsHeader {
+.actionsHeaderInner {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  width: 100%;
+}
+
+.actionsHeaderPlaceholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .rowActions {

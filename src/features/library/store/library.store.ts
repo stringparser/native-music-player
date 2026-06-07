@@ -30,6 +30,7 @@ interface LibraryState {
   addMediaToLibrary: (items: MediaItem[]) => Promise<void>;
   addMediaToQueue: (items: MediaItem[]) => Promise<void>;
   addLibraryTrackToQueue: (trackId: string) => Promise<void>;
+  playLibraryTrack: (trackId: string) => Promise<void>;
   loadPlaylistToQueue: (playlistId: string) => Promise<void>;
   removeFromQueue: (id: string) => Promise<void>;
   moveQueueItem: (id: string, direction: "up" | "down") => Promise<void>;
@@ -128,6 +129,19 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     if (saved) {
       toastService.success(`Added "${track.title}" to queue`);
     }
+  },
+
+  playLibraryTrack: async (trackId) => {
+    const result = queueService.ensureQueueTrackFromLibrary(trackId);
+    if (!result) return;
+
+    if (result.isNew) {
+      get().appendToQueue([result.track]);
+      await persistState();
+    }
+
+    get().selectMedia(result.track.id);
+    await playbackService.play(result.track);
   },
 
   loadPlaylistToQueue: async (playlistId) => {

@@ -12,7 +12,7 @@ interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   getRowKey: (item: T) => string;
   selectedId?: string | null;
-  nowPlayingId?: string | null;
+  isNowPlaying?: (item: T) => boolean;
   onSelect?: (item: T) => void;
   onDoubleClick?: (item: T) => void;
   renderRowActions?: (item: T) => React.ReactNode;
@@ -24,7 +24,7 @@ export function DataTable<T>({
   columns,
   getRowKey,
   selectedId,
-  nowPlayingId,
+  isNowPlaying,
   onSelect,
   onDoubleClick,
   renderRowActions,
@@ -36,12 +36,18 @@ export function DataTable<T>({
     const key = getRowKey(item);
     const classes = [];
     if (selectedId === key) classes.push(styles.selected);
-    if (nowPlayingId === key) classes.push(styles.nowPlaying);
+    if (isNowPlaying?.(item)) classes.push(styles.nowPlaying);
     return classes.join(" ");
   };
 
   return (
     <table className={styles.table}>
+      <colgroup>
+        {columns.map((column) => (
+          <col key={column.id} className={column.className} />
+        ))}
+        {hasActions ? <col className={styles.colActions} /> : null}
+      </colgroup>
       <thead>
         <tr>
           {columns.map((column) => (
@@ -50,8 +56,10 @@ export function DataTable<T>({
             </th>
           ))}
           {hasActions && (
-            <th className={`${styles.colActions} ${styles.colActionsHeader}`}>
-              {renderActionsHeader?.()}
+            <th className={styles.colActions}>
+              <div className={styles.actionsHeaderInner}>
+                {renderActionsHeader?.()}
+              </div>
             </th>
           )}
         </tr>

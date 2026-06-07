@@ -51,17 +51,17 @@ export function PlaylistTable({ playlists, library }: PlaylistTableProps) {
       renderRowActions={(playlist) => (
         <>
           <IconButton
-            title="Load into queue"
-            onClick={() => void loadPlaylistToQueue(playlist.id)}
-          >
-            <Play size={14} />
-          </IconButton>
-          <IconButton
             title="Delete playlist"
             variant="danger"
             onClick={() => void deletePlaylist(playlist.id)}
           >
             <Trash2 size={14} />
+          </IconButton>
+          <IconButton
+            title="Load into queue"
+            onClick={() => void loadPlaylistToQueue(playlist.id)}
+          >
+            <Play size={14} />
           </IconButton>
         </>
       )}

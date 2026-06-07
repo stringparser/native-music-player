@@ -99,7 +99,8 @@ export const usePlaybackStore = create<PlaybackState>((set) => ({
       library.find((entry) => entry.path === path);
 
     if (item) {
-      set({ nowPlayingId: item.id });
+      const queueMatch = queue.find((entry) => entry.path === path);
+      set({ nowPlayingId: queueMatch?.id ?? item.id });
     }
   },
 
