@@ -1,17 +1,10 @@
-.mediaTab {
+.libraryTab {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: auto;
+  min-height: 100%;
 }
 
-.section {
+.collections {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-}
-
-.playlistsSection {
-  margin-top: 4px;
-  border-top: 1px solid var(--border-subtle);
 }

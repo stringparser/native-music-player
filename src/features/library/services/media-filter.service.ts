@@ -1,4 +1,5 @@
 import type { MediaItem, Playlist } from "../model/types";
+import { getParentFolderName } from "./media-folder.service";
 
 export function filterMediaByQuery(
   items: MediaItem[],
@@ -12,7 +13,8 @@ export function filterMediaByQuery(
       item.title.toLowerCase().includes(normalized) ||
       item.artist?.toLowerCase().includes(normalized) ||
       item.album?.toLowerCase().includes(normalized) ||
-      item.category.toLowerCase().includes(normalized),
+      item.category.toLowerCase().includes(normalized) ||
+      getParentFolderName(item.path).toLowerCase().includes(normalized),
   );
 }
 

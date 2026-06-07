@@ -1,0 +1,80 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.1s;
+  box-shadow: inset 3px 0 0 transparent;
+}
+
+.row:hover {
+  background: var(--bg-hover);
+}
+
+.row.selected {
+  background: var(--accent-muted);
+}
+
+.row.nowPlaying {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.row.selected .title,
+.row.nowPlaying .title {
+  color: var(--text-primary);
+}
+
+.leading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.index {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.dot {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.title {
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trailing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.duration {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
+}
